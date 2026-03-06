@@ -1,6 +1,6 @@
 import { PrismaClient,Prisma } from '@prisma/client';
-import { prisma } from '../config/prisma.js';
-import { sort_fields, order, sortBy, orderBy } from "../types/sortBy.js";
+import { prisma } from '../config/prisma';
+import { sort_fields, order, sortBy, orderBy } from "../types/sortBy";
 
 
 // create notes

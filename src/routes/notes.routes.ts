@@ -1,6 +1,6 @@
 import express from 'express';
-import {createNoteController, getNotesController,  searchNotesController, updateNoteController, deleteNoteController, getNoteByIdController} from '../controllers/notes.controller.js';
-import authMiddleware from '../middlewares/auth.js';
+import {createNoteController, getNotesController,  searchNotesController, updateNoteController, deleteNoteController, getNoteByIdController} from '../controllers/notes.controller';
+import authMiddleware from '../middlewares/auth';
 
 const router = express.Router();
 

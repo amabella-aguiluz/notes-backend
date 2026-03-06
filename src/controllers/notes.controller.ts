@@ -1,9 +1,9 @@
-import { searchNotesService, getNotesService, createNoteService, updateNoteService, deleteNoteService, getNoteByIdService } from '../services/notes.service.js';
+import { searchNotesService, getNotesService, createNoteService, updateNoteService, deleteNoteService, getNoteByIdService } from '../services/notes.service';
 import { Request, Response } from "express";
 
-import { sort_fields, order, sortBy, orderBy } from "../types/sortBy.js";
-import { AuthRequest } from "../middlewares/auth.js";
-import { toNumber } from "../util/toNumber.js";
+import { sort_fields, order, sortBy, orderBy } from "../types/sortBy";
+import { AuthRequest } from "../middlewares/auth";
+import { toNumber } from "../util/toNumber";
 
 
 // create note

@@ -1,14 +1,14 @@
-import express from "express";
-import { registerController, loginController, forgotPasswordController, resetPasswordController } from "../controllers/user.controller.js";
-import { authMiddleware } from "../middlewares/auth.js";
+import express, { RequestHandler }  from "express";
+import { registerController, loginController, forgotPasswordController, resetPasswordController } from "../controllers/user.controller";
+import { authMiddleware } from "../middlewares/auth";
 
 const router = express.Router();
 
 
-router.post("/register", registerController as unknown as (req: express.Request, res: express.Response) => any);
-router.post("/login", loginController as unknown as (req: express.Request, res: express.Response) => any);
-router.post("/forgot-password", forgotPasswordController as unknown as (req: express.Request, res: express.Response) => any);
-router.post("/reset-password", resetPasswordController as unknown as (req: express.Request, res: express.Response) => any);
+router.post("/register", registerController);
+router.post("/login", loginController);
+router.post("/forgot-password", forgotPasswordController);
+router.post("/reset-password", resetPasswordController);
 
 router.use(authMiddleware); // protect routes
 
