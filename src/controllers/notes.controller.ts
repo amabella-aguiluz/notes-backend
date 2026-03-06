@@ -103,7 +103,7 @@ export const deleteNoteController = async (req: Request, res: Response) => {
     if (!note) return res.status(404).json({ error: "Note not found" });
     if (note.user_id !== user_id) return res.status(403).json({ error: "Unauthorized" });
 
-    await deleteNoteService(user_id, note_id);
+    await deleteNoteService(note_id);
     res.json({ message: "Note deleted" });
     console.log(`Deleted note ${note_id}`);
   } catch (err: unknown) {

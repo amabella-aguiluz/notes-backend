@@ -64,10 +64,9 @@ export const updateNoteService = async (
 
 //delete notes
 export const deleteNoteService = async (
-  user_id: number,
   note_id: number) => {
-  return await prisma.notes.findFirst({
-    where: { note_id, user_id },
+  return await prisma.notes.delete({
+    where: { note_id },
   });
 };
 
