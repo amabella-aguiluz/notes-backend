@@ -1,5 +1,6 @@
-import app from "./app.js";
-import env from "./config/env.js";
+import app from "./app";
+import env from "./config/env";
+
 
 app.listen(env.PORT, () => {
   console.log(`Server running on port ${env.PORT}: ${env.BACKEND_URL}`);

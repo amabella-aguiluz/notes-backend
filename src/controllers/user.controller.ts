@@ -1,13 +1,13 @@
 import {
     createUserService, getUserEmailService, generatePasswordResetToken,
     resetPasswordService
-} from '../services/user.service.js';
+} from '../services/user.service';
 
 import jwt from 'jsonwebtoken';
 import { JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from "dotenv";
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 dotenv.config();
 
