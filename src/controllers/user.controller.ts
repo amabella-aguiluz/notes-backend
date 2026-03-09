@@ -2,7 +2,7 @@ import {
     createUserService, getUserEmailService, generatePasswordResetToken,
     resetPasswordService
 } from '../services/user.service';
-
+import {sendPasswordResetEmail} from "../util/email";
 import jwt from 'jsonwebtoken';
 import { JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
@@ -71,9 +71,10 @@ export const forgotPasswordController = async (req: Request, res: Response) => {
 
         const token = generatePasswordResetToken(user.user_id);
 
-        // TODO: send token via email
-        res.json({ message: "Reset token generated", token });
-        // TODO: send token via email
+        // Send email
+        await sendPasswordResetEmail(email, token); // send token via email
+
+        res.json({ message: "Password reset email has been sent" });
     } catch (err) {
         res.status(500).json({ error: (err as Error).message });
     }
