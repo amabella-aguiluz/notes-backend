@@ -1,4 +1,4 @@
-import { PrismaClient,Prisma } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import { prisma } from '../config/prisma';
 import { sort_fields, order, sortBy, orderBy } from "../types/sortBy";
 
@@ -13,42 +13,22 @@ export const createNoteService = async (
   });
 };
 
-// get user notes
-export const getUserNoteService = async (user_id: number) => {
-  return prisma.notes.findMany({ where: { user_id } });
-};
-
-// update notes
-export const getNotesService = async (
-  user_id: number,
-  sortBy: sortBy,
-  order: "asc" | "desc" = "asc") => {
-  //   const allowedSortFields = ["title", "createdAt", "updatedAt"];
-  //   if (!allowedSortFields.includes(sortBy)) {
-  //     throw new Error("Invalid sort field");
-  //   }
-
-  return await prisma.notes.findMany({
-    where: { user_id },
-    orderBy: { [sortBy]: order },
-  });
-};
-
 // search note titles by {query}
 // {query} = word in search bar
 export const searchNotesService = async (
   user_id: number,
-  query: string) => {
-  //   if (!query) {
-  //     throw new Error("Search query is required");
-  //   }
-
+  query: string,
+  sortBy: sortBy = "updated_at",
+  order: orderBy = "desc"
+) => {
   return await prisma.notes.findMany({
     where: {
       user_id,
-      OR: [
-        { title: { contains: query } }
-      ],
+      ...(query ? { title: { contains: query } } : {}), 
+      // only filter by title if query exists
+    },
+    orderBy: {
+      [sortBy]: order,
     },
   });
 };
@@ -59,7 +39,8 @@ export const updateNoteService = async (
   data: Partial<{ title: string, description: string }>) => {
   return prisma.notes.update({
     where: { note_id },
-    data: {...data, updated_at: new Date()} });
+    data: { ...data, updated_at: new Date() }
+  });
 };
 
 //delete notes
@@ -79,4 +60,4 @@ export const getNoteByIdService = async (
   });
 };
 
-export default { getNotesService, searchNotesService, createNoteService, updateNoteService, deleteNoteService, getNoteByIdService };
+export default {searchNotesService, createNoteService, updateNoteService, deleteNoteService, getNoteByIdService };

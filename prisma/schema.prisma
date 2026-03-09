@@ -10,7 +10,7 @@ datasource db {
 model notes {
   note_id     Int      @id @default(autoincrement())
   user_id     Int?
-  title       String?  @db.VarChar(30)
+  title       String  @db.VarChar(30)
   description String?  @db.LongText
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt

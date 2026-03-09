@@ -1,4 +1,4 @@
-import { searchNotesService, getNotesService, createNoteService, updateNoteService, deleteNoteService, getNoteByIdService } from '../services/notes.service';
+import { searchNotesService, createNoteService, updateNoteService, deleteNoteService, getNoteByIdService } from '../services/notes.service';
 import { Request, Response } from "express";
 
 import { sort_fields, order, sortBy, orderBy } from "../types/sortBy";
@@ -10,7 +10,7 @@ import { toNumber } from "../util/toNumber";
 export const createNoteController = async (req: Request, res: Response) => {
   const user_id = (req as AuthRequest).user_id;
   if (!user_id) return res.status(401).json({ error: "Unauthorized" });
-  
+
   const { title, description } = req.body;
   try {
     const note = await createNoteService(user_id, title, description);
@@ -22,32 +22,6 @@ export const createNoteController = async (req: Request, res: Response) => {
   }
 };
 
-// get user's notes
-export const getNotesController = async (req: Request, res: Response) => {
-  const user_id = (req as AuthRequest).user_id;
-  if (!user_id) return res.status(401).json({ error: "Unauthorized" });
-
-  const rawSortBy = req.query.sortBy;
-  const rawOrder = req.query.order;
-  try {
-    // validate sort field
-    const sort: sortBy =
-      typeof rawSortBy === "string" && sort_fields.includes(rawSortBy as sortBy)
-        ? (rawSortBy as sortBy)
-        : "updated_at"; // default sort field
-    // can sort by: title, createdAt, updatedAt
-
-    // validate order
-    const ord: orderBy =
-      rawOrder === "asc" ? "asc" : "desc"; // default to descending
-    // can sort by: ascending or descending
-
-    const notes = await getNotesService((req as AuthRequest).user_id, sort, ord);
-    res.json(notes);
-  } catch (err: unknown) {
-    res.status(500).json({ error: (err as Error).message });
-  }
-};
 
 // search notes by {query}
 // {query} = word in search bar
@@ -56,11 +30,21 @@ export const searchNotesController = async (req: Request, res: Response) => {
   const user_id = (req as AuthRequest).user_id;
   if (!user_id) return res.status(401).json({ error: "Unauthorized" });
 
-  const { query } = req.query;
-  if (typeof query !== 'string') return res.status(400).json({ error: "Query must be a string" });
-  if (!query) return res.status(400).json({ error: "Query is required" });
+  let query = req.query.query as string | undefined;
+  if (typeof query !== "string") query = ""; // if missing, default to empty string
+
+  const rawSortBy = req.query.sortBy as string;
+  const rawOrder = req.query.order as string;
+
+  const sort: sortBy =
+    typeof rawSortBy === "string" && sort_fields.includes(rawSortBy as sortBy)
+      ? (rawSortBy as sortBy)
+      : "updated_at";
+
+  const ord: orderBy = rawOrder === "asc" ? "asc" : "desc";
+
   try {
-    const notes = await searchNotesService(user_id, query);
+    const notes = await searchNotesService(user_id, query, sort, ord);
     res.json(notes);
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
@@ -131,5 +115,5 @@ export const getNoteByIdController = async (req: Request, res: Response) => {
 };
 
 export default {
-  createNoteController, searchNotesController, getNotesController, updateNoteController, deleteNoteController
+  createNoteController, searchNotesController, updateNoteController, deleteNoteController
 };
