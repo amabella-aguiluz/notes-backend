@@ -1,8 +1,8 @@
 import {
-    createUserService, getUserEmailService, generatePasswordResetToken,
+    createUserService, getUserEmailService, getUserByIdService, generatePasswordResetToken,
     resetPasswordService
 } from '../services/user.service';
-import {sendPasswordResetEmail} from "../util/email";
+import { sendPasswordResetEmail } from "../util/email";
 import jwt from 'jsonwebtoken';
 import { JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
@@ -46,7 +46,7 @@ export const loginController = async (req: Request, res: Response) => {
         if (!valid) return res.status(401).json({ error: 'Invalid password' });
 
         const secret = process.env.JWT_SECRET!;
-        const token = jwt.sign({ user_id: user.user_id }, secret, { expiresIn: '2h' });
+        const token = jwt.sign({ user_id: user.user_id }, secret, { expiresIn: '1h' });
 
         res.json({ token, user_id: user.user_id });
         console.log(`logged into user ${user.user_id}`);
@@ -97,6 +97,16 @@ export const resetPasswordController = async (req: Request, res: Response) => {
 
         if (decoded.purpose !== 'password_reset')
             return res.status(400).json({ error: 'Invalid reset token' });
+
+        const user = await getUserByIdService(decoded.user_id);
+
+        if (!user || !user.password) {
+            return res.status(400).json({ error: 'User not found or has no password' });
+        }
+
+        const comparePassword = await bcrypt.compare(newPassword, user.password);
+        if (comparePassword)
+            return res.status(400).json({ error: "You cannot use your previous password" });
 
         await resetPasswordService(decoded.user_id, newPassword);
         res.json({ message: 'Password updated successfully' });
