@@ -12,10 +12,12 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use(apiLimiter);
 
-app.use("/auth", authRouter);   
-app.use("/notes", notesRouter);
+app.use("/auth", apiLimiter({ max: 10, windowMinutes: 10 }), authRouter);   
+app.use("/notes", apiLimiter({ max: 100, windowMinutes: 15 }), notesRouter);
+
+// app.use("/auth" authRouter);   
+// app.use("/notes", notesRouter);
 
 app.use((req, res) => {
   console.log("Unmatched route:", req.method, req.url);
