@@ -35,6 +35,10 @@ export const getUserEmailService = async (email: string) => {
     return prisma.users.findUnique({ where: { email } });
 };
 
+export const getUserByIdService = async (user_id: number) => {
+  return prisma.users.findUnique({ where: { user_id } });
+};
+
 
 // forgot password
 // generate a token to reset password
@@ -56,10 +60,9 @@ export const resetPasswordService = async (
     });
 };
 
-
 export default {
     createUserService,
-    getUserEmailService,
+    getUserEmailService,getUserByIdService,
     generatePasswordResetToken,
     resetPasswordService
 };
