@@ -2,7 +2,7 @@ import {
     createUserService, getUserEmailService, getUserByIdService, generatePasswordResetToken,
     resetPasswordService
 } from '../services/user.service';
-import { sendPasswordResetEmail } from "../util/email";
+
 import jwt from 'jsonwebtoken';
 import { JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
