@@ -15,24 +15,27 @@ export const createUserService = async (
     if (password !== passwordConfirm) {
         throw new Error("Passwords do not match");
     };
+    // check if password is secure
+    securePassword(password);
 
-    if (!email || !password) {
-        throw new Error("Email and password are required");
-    };
     const existingUser = await getUserEmailService(email);
     if (existingUser) {
-        throw new Error("Email already exists");
+        throw new Error("Try a different email");
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     return prisma.users.create({
-        data: { email, password: hashedPassword }
+        data: { email: email.toLowerCase().trim(), password: hashedPassword }
     });
 };
 
 // find if user email already exists
 export const getUserEmailService = async (email: string) => {
-    return prisma.users.findUnique({ where: { email } });
+    return prisma.users.findUnique({ where: { email: email.toLowerCase().trim() } });
+};
+
+export const getUserByIdService = async (user_id: number) => {
+  return prisma.users.findUnique({ where: { user_id } });
 };
 
 
@@ -56,10 +59,9 @@ export const resetPasswordService = async (
     });
 };
 
-
 export default {
     createUserService,
-    getUserEmailService,
+    getUserEmailService,getUserByIdService,
     generatePasswordResetToken,
     resetPasswordService
 };
