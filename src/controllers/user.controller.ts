@@ -72,7 +72,7 @@ export const forgotPasswordController = async (req: Request, res: Response) => {
         const token = generatePasswordResetToken(user.user_id);
 
         // Send email
-        await sendPasswordResetEmail(email, token); // send token via email
+        // await sendPasswordResetEmail(email, token); // send token via email
 
         res.json({ message: "Password reset email has been sent" });
     } catch (err) {

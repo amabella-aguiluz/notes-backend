@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../config/prisma';
+import securePassword from '../util/password';
 
 
 export const createUserService = async (
@@ -53,6 +54,7 @@ export const resetPasswordService = async (
     user_id: number,
     newPassword: string) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
+    securePassword(hashedPassword);
     return await prisma.users.update({
         where: { user_id },
         data: { password: hashedPassword },
