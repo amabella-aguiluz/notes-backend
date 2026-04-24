@@ -1,9 +1,4 @@
-import app from "./app";
-import env from "./config/env";
+import app from "../src/app";
+import serverless from "serverless-http";
 
-
-// app.listen(env.PORT, () => {
-//   console.log(`Server running on port ${env.PORT}: ${env.BACKEND_URL}`);
-// });
-
-export default app;
+export default serverless(app);
