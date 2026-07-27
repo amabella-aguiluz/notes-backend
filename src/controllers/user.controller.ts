@@ -2,9 +2,9 @@ import {
     createUserService, getUserEmailService, getUserByIdService, generatePasswordResetToken,
     resetPasswordService
 } from '../services/user.service';
-
-import jwt from 'jsonwebtoken';
-import { JwtPayload } from 'jsonwebtoken';
+import { sendPasswordResetEmail } from "../util/email";
+import { generateToken } from '../util/token';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from "dotenv";
 import { Request, Response } from 'express';
@@ -23,7 +23,8 @@ export const registerController = async (req: Request, res: Response) => {
         const user = await createUserService(email, password, passwordConfirm);
 
         console.log(`registering...`);
-        res.status(201).json({ message: 'User successfully registered', user_id: user.user_id });
+        const token = generateToken(user.user_id);
+        res.status(200).json({ token, message: 'User successfully registered', user_id: user.user_id });
         console.log(`created user ${user.user_id}`);
     }
     catch (err) {
@@ -46,7 +47,7 @@ export const loginController = async (req: Request, res: Response) => {
         if (!valid) return res.status(401).json({ error: 'Invalid password' });
 
         const secret = process.env.JWT_SECRET!;
-        const token = jwt.sign({ user_id: user.user_id }, secret, { expiresIn: '1h' });
+        const token = generateToken(user.user_id);
 
         res.json({ token, user_id: user.user_id });
         console.log(`logged into user ${user.user_id}`);
@@ -72,7 +73,8 @@ export const forgotPasswordController = async (req: Request, res: Response) => {
         const token = generatePasswordResetToken(user.user_id);
 
         // Send email
-        // await sendPasswordResetEmail(email, token); // send token via email
+
+        await sendPasswordResetEmail(email, token); // send token via emai
 
         res.json({ message: "Password reset email has been sent" });
     } catch (err) {
